@@ -1,0 +1,79 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+// Load local.properties
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+// Define flutterRoot using localProperties
+def flutterRoot = localProperties.getProperty('flutter.sdk') ?: System.getenv('FLUTTER_ROOT')
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+
+android {
+    namespace 'flutter.tflite_audio_example'
+    compileSdkVersion 34
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    aaptOptions {
+        noCompress 'tflite'
+    }
+
+    defaultConfig {
+        applicationId "flutter.tflite_audio_example"
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode flutterVersionCode != null ? flutterVersionCode.toInteger() : 1
+        versionName flutterVersionName != null ? flutterVersionName : "1.0"
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    // Correct placement of kotlinOptions
+    kotlinOptions {
+        jvmTarget = "21"
+    }
+}
+
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:2.12.0' // Updated version
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+//dependencies {
+//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+//    testImplementation 'junit:junit:4.12'
+//    androidTestImplementation 'androidx.test:runner:1.2.0'
+//    androidTestImplementation 'androidx.test:rules:1.2.0'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+//    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:2.7.0'  // Specific version of TensorFlow Lite
+//}

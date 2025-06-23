@@ -1,0 +1,38 @@
+
+/* Point of reference
+https://github.com/flutter/plugins/blob/main/packages/camera/camera/example/android/build.gradle
+*/
+
+
+buildscript {
+    ext.kotlin_version = '1.7.10'  // Ensure compatibility with Gradle and Android plugins
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.2.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
